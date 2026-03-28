@@ -1,38 +1,53 @@
 from common import get_api_key, conv_template, extract_json
 from language_models import APILiteLLM
 from config import FASTCHAT_TEMPLATE_NAMES, Model
+from local_llm import LocalSharedLlamaChat
 
 
 def load_attack_and_target_models(args):
-    # create attack model and target model
+    local_path = getattr(args, "local_llama_path", None) if args.evaluate_locally else None
+    shared_local = None
+    if local_path:
+        # One HF load for both attacker and target (same weights in memory).
+        shared_local = LocalSharedLlamaChat(local_path, args.attack_model)
+
     attackLM = AttackLM(model_name = args.attack_model, 
                         max_n_tokens = args.attack_max_n_tokens, 
                         max_n_attack_attempts = args.max_n_attack_attempts, 
                         category = args.category,
-                        evaluate_locally = args.evaluate_locally
+                        evaluate_locally = args.evaluate_locally,
+                        local_model_path = local_path,
+                        shared_local_model = shared_local,
                         )
     
     targetLM = TargetLM(model_name = args.target_model,
                         category = args.category,
                         max_n_tokens = args.target_max_n_tokens,
                         evaluate_locally = args.evaluate_locally,
-                        phase = args.jailbreakbench_phase
+                        phase = args.jailbreakbench_phase,
+                        local_model_path = local_path,
+                        shared_local_model = shared_local,
                         )
     
     return attackLM, targetLM
 
-def load_indiv_model(model_name, local = False, use_jailbreakbench=True):
+def load_indiv_model(model_name, local = False, use_jailbreakbench=True, local_model_path = None):
     if use_jailbreakbench: 
         if local:
-            from jailbreakbench import LLMvLLM
-            lm = LLMvLLM(model_name=model_name)
+            if local_model_path:
+                lm = LocalSharedLlamaChat(local_model_path, model_name)
+            else:
+                from jailbreakbench import LLMvLLM
+                lm = LLMvLLM(model_name=model_name)
         else:
             from jailbreakbench import LLMLiteLLM
             api_key = get_api_key(Model(model_name))
             lm = LLMLiteLLM(model_name= model_name, api_key = api_key)
     else:
         if local:
-            raise NotImplementedError
+            if not local_model_path:
+                raise ValueError("Local evaluation requires --local-llama-path to a Hugging Face model directory.")
+            lm = LocalSharedLlamaChat(local_model_path, model_name)
         else:
             lm = APILiteLLM(model_name)
     return lm
@@ -48,7 +63,10 @@ class AttackLM():
                 max_n_tokens: int, 
                 max_n_attack_attempts: int, 
                 category: str,
-                evaluate_locally: bool):
+                evaluate_locally: bool,
+                local_model_path: str | None = None,
+                shared_local_model = None,
+                ):
         
         self.model_name = Model(model_name)
         self.max_n_tokens = max_n_tokens
@@ -60,10 +78,14 @@ class AttackLM():
 
         self.category = category
         self.evaluate_locally = evaluate_locally
-        self.model = load_indiv_model(model_name, 
-                                      local = evaluate_locally, 
-                                      use_jailbreakbench=False # Cannot use JBB as attacker
-                                      )
+        if shared_local_model is not None:
+            self.model = shared_local_model
+        else:
+            self.model = load_indiv_model(model_name, 
+                                          local = evaluate_locally, 
+                                          use_jailbreakbench=False, # Cannot use JBB as attacker
+                                          local_model_path = local_model_path,
+                                          )
         self.initialize_output = self.model.use_open_source_model
         self.template = FASTCHAT_TEMPLATE_NAMES[self.model_name]
 
@@ -163,6 +185,8 @@ class TargetLM():
             phase: str,
             evaluate_locally: bool = False,
             use_jailbreakbench: bool = True,
+            local_model_path: str | None = None,
+            shared_local_model = None,
             ):
         
         self.model_name = model_name
@@ -175,7 +199,15 @@ class TargetLM():
         self.temperature = TARGET_TEMP
         self.top_p = TARGET_TOP_P
 
-        self.model = load_indiv_model(model_name, evaluate_locally, use_jailbreakbench)            
+        if shared_local_model is not None:
+            self.model = shared_local_model
+        else:
+            self.model = load_indiv_model(
+                model_name,
+                evaluate_locally,
+                use_jailbreakbench,
+                local_model_path = local_model_path,
+            )
         self.category = category
 
     def get_response(self, prompts_list):

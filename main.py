@@ -3,6 +3,7 @@ from loggers import WandBLogger, logger
 from judges import load_judge
 from conversers import load_attack_and_target_models
 from common import process_target_response, initialize_conversations
+from config import LOCAL_LLAMA_PATH, LOCAL_LLAMA_GUARD_PATH
 import psutil
 import os
 import time
@@ -131,7 +132,7 @@ if __name__ == '__main__':
         "--judge-model",
         default="gcg", #TODO changed
         help="Name of judge model. Defaults to the Llama Guard model from JailbreakBench.",
-        choices=["gpt-3.5-turbo-1106", "gpt-4-0125-preview","no-judge","jailbreakbench","gcg"]
+        choices=["gpt-3.5-turbo-1106", "gpt-4-0125-preview","no-judge","jailbreakbench","gcg","llama-guard-local"]
     )
     parser.add_argument(
         "--judge-max-n-tokens",
@@ -184,6 +185,18 @@ if __name__ == '__main__':
         "--evaluate-locally",
         action = 'store_true',
         help = "Evaluate models locally rather than through Together.ai. We do not recommend this option as it may be computationally expensive and slow."
+    )
+    parser.add_argument(
+        "--local-llama-path",
+        type = str,
+        default = LOCAL_LLAMA_PATH,
+        help = "Directory with a local Hugging Face Llama 2 Chat model (used for attacker and target when --evaluate-locally; loads twice)."
+    )
+    parser.add_argument(
+        "--local-llama-guard-path",
+        type = str,
+        default = LOCAL_LLAMA_GUARD_PATH,
+        help = "Directory with a local Hugging Face Llama Guard 3 model for --judge-model llama-guard-local."
     )
     ##################################################
 

@@ -2,6 +2,10 @@ from enum import Enum
 VICUNA_PATH = "/home/pchao/vicuna-13b-v1.5"
 LLAMA_PATH = "/home/pchao/Llama-2-7b-chat-hf"
 
+# Default local checkpoints (override with CLI --local-llama-path / --local-llama-guard-path)
+LOCAL_LLAMA_PATH = "/home/taegyoem/scratch/llama2_7b_chat_hf"
+LOCAL_LLAMA_GUARD_PATH = "/home/taegyoem/scratch/llama_guard_3_1b"
+
 ATTACK_TEMP = 1
 TARGET_TEMP = 0
 ATTACK_TOP_P = 0.9
