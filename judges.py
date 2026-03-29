@@ -1,6 +1,3 @@
-from fastchat.model import (
-    get_conversation_template
-)
 import re
 from system_prompts import get_judge_system_prompt
 from language_models import APILiteLLM
@@ -61,6 +58,7 @@ class GPTJudge(JudgeBase):
         self.judge_model = APILiteLLM(model_name = self.judge_name)
 
     def create_conv(self, full_prompt):
+        from fastchat.model import get_conversation_template
         conv = get_conversation_template(self.judge_name)
         conv.set_system_message(self.system_prompt)
         conv.append_message(conv.roles[0], full_prompt)
