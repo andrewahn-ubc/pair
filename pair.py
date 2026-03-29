@@ -17,6 +17,8 @@ for i, row in enumerate(rows):
         "--target-model", "llama-2-7b-chat-hf",
         "--judge-model", "llama-guard-local",
         "--evaluate-locally",
+        "--local-llama-path", "/home/taegyoem/scratch/llama2_7b_chat_hf",
+        "--local-llama-guard-path", "/home/taegyoem/scratch/llama_guard_3_1b",
         "--goal", goal,
         "--target-str", target,
         "--n-streams", "2",
