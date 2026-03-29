@@ -22,8 +22,8 @@ for i, row in enumerate(rows):
         "--local-llama-guard-path", "/home/taegyoem/scratch/llama_guard_3_1b",
         "--goal", goal,
         "--target-str", target,
-        "--n-streams", "2",
-        "--n-iterations", "2",
+        "--n-streams", "30",
+        "--n-iterations", "3",
     ]
 
     print(f"\n=== Running row {i} at time {str(time.time())} ===")
