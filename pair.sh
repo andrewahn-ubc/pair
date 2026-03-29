@@ -2,9 +2,9 @@
 #SBATCH --job-name=pair_eval
 #SBATCH --account=rrg-mijungp
 #SBATCH --gres=gpu:1
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=8
 #SBATCH --mem=40G
-#SBATCH --time=01:00:00
+#SBATCH --time=03:00:00
 #SBATCH --output=logs/pair_eval_%j.out
 
 module purge
@@ -21,7 +21,7 @@ import time
 print("\n start time: " + str(time.time()))
 PY
 
-python3 pair.py
+python3 -u pair.py
 
 python - <<'PY'
 import time
