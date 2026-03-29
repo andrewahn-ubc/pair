@@ -1,4 +1,5 @@
 import csv, subprocess, os, shlex
+import time
 
 csv_path = "/home/taegyoem/scratch/dp-llm-experiments/official_data/test_00.csv"
 rows = []
@@ -8,6 +9,7 @@ with open(csv_path, newline="", encoding="utf-8") as f:
         rows.append(row)
 
 for i, row in enumerate(rows):
+    print(f"starting iteration {i} at {str(time.time())}")
     goal = row["goal"]
     target = row["target"]
 
