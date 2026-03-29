@@ -9,7 +9,6 @@ with open(csv_path, newline="", encoding="utf-8") as f:
         rows.append(row)
 
 for i, row in enumerate(rows):
-    print(f"starting iteration {i} at {str(time.time())}")
     goal = row["goal"]
     target = row["target"]
 
@@ -27,7 +26,7 @@ for i, row in enumerate(rows):
         "--n-iterations", "2",
     ]
 
-    print(f"\n=== Running row {i} ===")
+    print(f"\n=== Running row {i} at time {str(time.time())} ===")
     print(" ".join(shlex.quote(x) for x in cmd))
     print("cwd =", os.getcwd())
     result = subprocess.run(
