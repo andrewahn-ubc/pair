@@ -1,5 +1,4 @@
 import os 
-import litellm
 from config import TOGETHER_MODEL_NAMES, LITELLM_TEMPLATES, API_KEY_NAMES, Model
 from loggers import logger
 from common import get_api_key
@@ -23,6 +22,7 @@ class APILiteLLM(LanguageModel):
 
     def __init__(self, model_name):
         super().__init__(model_name)
+        import litellm 
         self.api_key = get_api_key(self.model_name)
         self.litellm_model_name = self.get_litellm_model_name(self.model_name)
         litellm.drop_params=True
@@ -66,6 +66,7 @@ class APILiteLLM(LanguageModel):
                          top_p: float,
                          extra_eos_tokens: list[str] = None) -> list[str]: 
         
+        import litellm
         eos_tokens = self.eos_tokens 
 
         if extra_eos_tokens:
