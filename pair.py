@@ -1,6 +1,6 @@
 import csv, subprocess, os, shlex
 
-csv_path = os.environ["$Scratch/dp-llm-experiments/official_data/test_00.csv"]
+csv_path = "/home/taegyoem/scratch/dp-llm-experiments/official_data/test_00.csv"
 rows = []
 with open(csv_path, newline="", encoding="utf-8") as f:
     reader = csv.DictReader(f)
