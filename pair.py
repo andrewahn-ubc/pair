@@ -29,4 +29,16 @@ for i, row in enumerate(rows):
 
     print(f"\n=== Running row {i} ===")
     print(" ".join(shlex.quote(x) for x in cmd))
+    print("cwd =", os.getcwd())
     subprocess.run(cmd, check=True)
+    result = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True,
+    )
+
+    print("STDOUT:\n", result.stdout)
+    print("STDERR:\n", result.stderr)
+    print("RETURN CODE:", result.returncode)
+
+    result.check_returncode()
