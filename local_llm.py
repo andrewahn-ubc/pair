@@ -15,6 +15,11 @@ def _pick_dtype():
         return torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
     return torch.float32
 
+class LLMOutput:
+    def __init__(self, responses, prompt_tokens, completion_tokens):
+        self.responses = responses
+        self.prompt_tokens = prompt_tokens
+        self.completion_tokens = completion_tokens
 
 class LocalSharedLlamaChat(LanguageModel):
     """
@@ -25,10 +30,11 @@ class LocalSharedLlamaChat(LanguageModel):
 
     def __init__(self, model_path: str, model_name: str):
         super().__init__(model_name)
-        import jailbreakbench.config as jbb
+        # import jailbreakbench.config as jbb
 
-        self.jbb_model = jbb.Model(model_name.lower())
-        self.target_system_prompt = jbb.SYSTEM_PROMPTS[self.jbb_model]
+        # self.jbb_model = jbb.Model(model_name.lower())
+        # self.target_system_prompt = jbb.SYSTEM_PROMPTS[self.jbb_model]
+        self.target_system_prompt = None # removed JBB dependency since I'm using a local judge
 
         dtype = _pick_dtype()
         self.tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
@@ -100,7 +106,7 @@ class LocalSharedLlamaChat(LanguageModel):
         max_new_tokens: int | None = None,
         defense: str | None = None,
     ):
-        from jailbreakbench.llm_output import LLMOutput
+        # from jailbreakbench.llm_output import LLMOutput
 
         if defense is not None:
             raise NotImplementedError("Local target does not implement defenses.")
