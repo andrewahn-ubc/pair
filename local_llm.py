@@ -118,14 +118,14 @@ class LocalSharedLlamaChat(LanguageModel):
         max_new_tokens: int | None = None,
         defense: str | None = None,
     ):
-        # from jailbreakbench.llm_output import LLMOutput
-
         if defense is not None:
             raise NotImplementedError("Local target does not implement defenses.")
+
         max_new = max_new_tokens if max_new_tokens is not None else 150
         responses: list[str] = []
         prompt_tokens: list[int] = []
         completion_tokens: list[int] = []
+
         for prompt in prompts:
             if self.target_system_prompt is None:
                 messages = [{"role": "user", "content": prompt}]
@@ -134,24 +134,39 @@ class LocalSharedLlamaChat(LanguageModel):
                     {"role": "system", "content": self.target_system_prompt},
                     {"role": "user", "content": prompt},
                 ]
+
             input_ids = self.tokenizer.apply_chat_template(
                 messages,
                 tokenize=True,
                 add_generation_prompt=True,
                 return_tensors="pt",
             ).to(self.model.device)
+
             with torch.inference_mode():
-                out = self.model.generate(
-                    input_ids,
-                    max_new_tokens=max_new,
-                    do_sample=False,
-                    pad_token_id=self.tokenizer.pad_token_id or self.tokenizer.eos_token_id,
-                )
-            new_tokens = out[0, input_ids.shape[-1] :]
+                if isinstance(input_ids, torch.Tensor):
+                    out = self.model.generate(
+                        input_ids,
+                        max_new_tokens=max_new,
+                        do_sample=False,
+                        pad_token_id=self.tokenizer.pad_token_id or self.tokenizer.eos_token_id,
+                    )
+                    prompt_len = input_ids.shape[-1]
+                else:
+                    out = self.model.generate(
+                        **input_ids,
+                        max_new_tokens=max_new,
+                        do_sample=False,
+                        pad_token_id=self.tokenizer.pad_token_id or self.tokenizer.eos_token_id,
+                    )
+                    prompt_len = input_ids["input_ids"].shape[-1]
+
+            new_tokens = out[0, prompt_len:]
             text = self.tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
+
             responses.append(text)
-            prompt_tokens.append(int(input_ids.shape[-1]))
+            prompt_tokens.append(int(prompt_len))
             completion_tokens.append(int(new_tokens.shape[0]))
+
         return LLMOutput(
             responses=responses,
             prompt_tokens=prompt_tokens,
