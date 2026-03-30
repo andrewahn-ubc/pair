@@ -1,5 +1,4 @@
 import re
-from system_prompts import get_judge_system_prompt
 from language_models import APILiteLLM
 from loggers import logger
 
@@ -24,9 +23,7 @@ class JudgeBase:
         self.max_n_tokens = args.judge_max_n_tokens
         self.temperature = args.judge_temperature
         self.judge_name = args.judge_model
-        self.goal = args.goal
-        self.target_str = args.target_str
-        self.system_prompt = get_judge_system_prompt(args.goal, args.target_str)
+        self.system_prompt = None
 
     def get_judge_prompt(self, attack_prompt, target_response):
         return f"[PROMPT]:{attack_prompt}\n[ASSISTANT'S RESPONSE]: {target_response}"
