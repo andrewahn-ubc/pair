@@ -63,17 +63,20 @@ class LocalSharedLlamaChat(LanguageModel):
     ) -> list[str]:
         responses: list[str] = []
         extra_eos_tokens = extra_eos_tokens or []
+
         for messages in convs_list:
             if self.tokenizer.chat_template is None:
                 raise ValueError(
                     "Tokenizer has no chat_template; use a Llama 2 Chat snapshot with tokenizer_config.json."
                 )
+
             input_ids = self.tokenizer.apply_chat_template(
                 messages,
                 tokenize=True,
                 add_generation_prompt=True,
                 return_tensors="pt",
             ).to(self.model.device)
+
             do_sample = temperature is not None and temperature > 0
             gen_kwargs = dict(
                 max_new_tokens=max_n_tokens,
@@ -87,15 +90,24 @@ class LocalSharedLlamaChat(LanguageModel):
                 gen_kwargs["do_sample"] = False
 
             with torch.inference_mode():
-                out = self.model.generate(input_ids, **gen_kwargs)
-            new_tokens = out[0, input_ids.shape[-1] :]
+                if isinstance(input_ids, torch.Tensor):
+                    out = self.model.generate(input_ids, **gen_kwargs)
+                    prompt_len = input_ids.shape[-1]
+                else:
+                    out = self.model.generate(**input_ids, **gen_kwargs)
+                    prompt_len = input_ids["input_ids"].shape[-1]
+
+            new_tokens = out[0, prompt_len:]
             text = self.tokenizer.decode(new_tokens, skip_special_tokens=True)
+
             for stop in extra_eos_tokens:
                 j = text.find(stop)
                 if j != -1:
                     text = text[:j]
                     break
+
             responses.append(text)
+
         return responses
 
     def query(
