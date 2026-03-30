@@ -3,7 +3,6 @@ from system_prompts import get_judge_system_prompt
 from language_models import APILiteLLM
 from loggers import logger
 
-from jailbreakbench import Classifier
 import os
 
 def load_judge(args):
@@ -75,6 +74,7 @@ class GPTJudge(JudgeBase):
     
 class JBBJudge(JudgeBase):
     def __init__(self,classifier_path):
+        from jailbreakbench import Classifier
         self.judge_model = Classifier(classifier_path)
         self.judge_name = "JBBJudge"
 
