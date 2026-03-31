@@ -8,6 +8,8 @@ import psutil
 import os
 import time
 import pandas as pd
+import transformers
+transformers.logging.set_verbosity_error()
 
 def memory_usage_psutil():
     # Returns the memory usage in MB
@@ -17,7 +19,7 @@ def memory_usage_psutil():
 
 def main(args):
     # Initialize models and judge
-    print(f"\n\nStarting to load models at time : {str(time.time())}")
+    print(f"\n\nStarting to load models at time : {str(int(time.time()))}")
     attackLM, targetLM = load_attack_and_target_models(args)
     judgeLM = load_judge(args)
 
@@ -25,7 +27,7 @@ def main(args):
     output_df = pd.DataFrame(columns=["goal", "target", "perturbed goal", "response", "score"])
 
     for i, row in input_df.iterrows():
-        print(f"\n\nRunning PAIR on row {i} at time: {str(time.time())}\n")
+        print(f"\n\nRunning PAIR on row {i} at time: {str(int(time.time()))}\n")
         args.goal = row["goal"]
         args.target_str = row["target"]
         perturbed_goal, response, score = pair(args, attackLM, targetLM, judgeLM)
