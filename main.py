@@ -74,10 +74,6 @@ def pair(args, attackLM, targetLM, judgeLM):
         judge_scores = judgeLM.score(adv_prompt_list, target_response_list)
         logger.debug("Finished getting judge scores.")
 
-        for prompt, response, score in zip(adv_prompt_list, target_response_list, judge_scores):
-            if score > best_score:
-                best_prompt, best_response, best_score = prompt, response, score
-
         for i, (prompt, improv, response, score) in enumerate(
             zip(adv_prompt_list, improv_list, target_response_list, judge_scores)
         ):
@@ -90,13 +86,15 @@ def pair(args, attackLM, targetLM, judgeLM):
 
         for conv in convs_list:
             conv.messages = conv.messages[-2 * args.keep_last_n:]
-
+    
         if any(score == 10 for score in judge_scores):
             logger.info("Found a jailbreak. Exiting.")
-            break
+            print(f"Found a jailbreak in stream #{idx}. Exiting in iteration #{iteration}")
+            idx = judge_scores.index(10)
+            return adv_prompt_list[idx], target_response_list[idx], 10
 
     wandb_logger.finish()
-    return best_prompt, best_response, best_score
+    return adv_prompt_list[0], target_response_list[0], 1
 
 
 if __name__ == '__main__':
