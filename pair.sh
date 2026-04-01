@@ -28,6 +28,7 @@ python3 -u main.py \
     --evaluate-locally \
     --local-llama-path "/home/taegyoem/scratch/llama2_7b_chat_hf" \
     --local-llama-guard-path "/home/taegyoem/scratch/llama_guard_3_1b" \
+    --local-attacker-path "/home/taegyoem/scratch/vicuna_13b" \
     --input-path "/home/taegyoem/scratch/dp-llm-experiments/official_data/test_00.csv" \
     --output-path "/home/taegyoem/scratch/pair/results/test_00_pair_output.csv" \
     --n-streams "30" \

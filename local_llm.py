@@ -65,17 +65,16 @@ class LocalSharedLlamaChat(LanguageModel):
         extra_eos_tokens = extra_eos_tokens or []
 
         for messages in convs_list:
-            if self.tokenizer.chat_template is None:
-                raise ValueError(
-                    "Tokenizer has no chat_template; use a Llama 2 Chat snapshot with tokenizer_config.json."
-                )
-
-            input_ids = self.tokenizer.apply_chat_template(
-                messages,
-                tokenize=True,
-                add_generation_prompt=True,
-                return_tensors="pt",
-            ).to(self.model.device)
+            if self.tokenizer.chat_template is not None:
+                input_ids = self.tokenizer.apply_chat_template(
+                    messages, tokenize=True, add_generation_prompt=True, return_tensors="pt"
+                ).to(self.model.device)
+                prompt_len = input_ids.shape[-1]
+            else:
+                # Models without chat_template (e.g. Vicuna)
+                prompt_str = self._format_messages_vicuna(messages)
+                input_ids = self.tokenizer(prompt_str, return_tensors="pt").input_ids.to(self.model.device)
+                prompt_len = input_ids.shape[-1]
 
             do_sample = temperature is not None and temperature > 0
             gen_kwargs = dict(
@@ -172,3 +171,17 @@ class LocalSharedLlamaChat(LanguageModel):
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,
         )
+    
+    def _format_messages_vicuna(self, messages: list[dict]) -> str:
+        system = "A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions."
+        prompt = system + "\n\n"
+        for msg in messages:
+            if msg["role"] == "system":
+                # Override default system prompt if one is provided
+                prompt = msg["content"] + "\n\n"
+            elif msg["role"] == "user":
+                prompt += f"USER: {msg['content']}\n"
+            elif msg["role"] == "assistant":
+                prompt += f"ASSISTANT: {msg['content']}\n"
+        prompt += "ASSISTANT:"
+        return prompt

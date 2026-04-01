@@ -6,29 +6,33 @@ from local_llm import LocalSharedLlamaChat
 
 def load_attack_and_target_models(args):
     local_path = getattr(args, "local_llama_path", None) if args.evaluate_locally else None
+    attacker_path = getattr(args, "local_attacker_path", None) if args.evaluate_locally else None
+
+    # Only share weights if attacker and target are the same model
     shared_local = None
-    if local_path:
-        # One HF load for both attacker and target (same weights in memory).
+    if local_path and attacker_path and local_path == attacker_path:
         shared_local = LocalSharedLlamaChat(local_path, args.attack_model)
 
-    attackLM = AttackLM(model_name = args.attack_model, 
-                        max_n_tokens = args.attack_max_n_tokens, 
-                        max_n_attack_attempts = args.max_n_attack_attempts, 
-                        category = args.category,
-                        evaluate_locally = args.evaluate_locally,
-                        local_model_path = local_path,
-                        shared_local_model = shared_local,
-                        )
-    
-    targetLM = TargetLM(model_name = args.target_model,
-                        category = args.category,
-                        max_n_tokens = args.target_max_n_tokens,
-                        evaluate_locally = args.evaluate_locally,
-                        phase = args.jailbreakbench_phase,
-                        local_model_path = local_path,
-                        shared_local_model = shared_local,
-                        )
-    
+    attackLM = AttackLM(
+        model_name=args.attack_model,
+        max_n_tokens=args.attack_max_n_tokens,
+        max_n_attack_attempts=args.max_n_attack_attempts,
+        category=args.category,
+        evaluate_locally=args.evaluate_locally,
+        local_model_path=attacker_path,      # <-- attacker path
+        shared_local_model=shared_local,
+    )
+
+    targetLM = TargetLM(
+        model_name=args.target_model,
+        category=args.category,
+        max_n_tokens=args.target_max_n_tokens,
+        evaluate_locally=args.evaluate_locally,
+        phase=args.jailbreakbench_phase,
+        local_model_path=local_path,         # <-- target path
+        shared_local_model=shared_local,
+    )
+
     return attackLM, targetLM
 
 def load_indiv_model(model_name, local = False, use_jailbreakbench=True, local_model_path = None):

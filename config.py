@@ -5,6 +5,7 @@ LLAMA_PATH = "/home/pchao/Llama-2-7b-chat-hf"
 # Default local checkpoints (override with CLI --local-llama-path / --local-llama-guard-path)
 LOCAL_LLAMA_PATH = "/home/taegyoem/scratch/llama2_7b_chat_hf"
 LOCAL_LLAMA_GUARD_PATH = "/home/taegyoem/scratch/llama_guard_3_1b"
+LOCAL_VICUNA_PATH = "/home/taegyoem/scratch/vicuna_13b"
 
 ATTACK_TEMP = 1
 TARGET_TEMP = 0
@@ -22,6 +23,7 @@ class Model(Enum):
     claude_2 = "claude-2.1"
     gemini = "gemini-pro"
     mixtral = "mixtral"
+    wizard_vicuna = "wizard-vicuna-13b" 
 
 MODEL_NAMES = [model.value for model in Model]
 
