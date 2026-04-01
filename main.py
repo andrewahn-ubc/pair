@@ -81,6 +81,7 @@ def pair(args, attackLM, targetLM, judgeLM):
                 f"{i+1}/{batchsize}\n\n[IMPROVEMENT]:\n{improv}\n\n[PROMPT]:\n{prompt}"
                 f"\n\n[RESPONSE]:\n{response}\n\n[SCORE]:\n{score}\n\n"
             )
+            print(f'\n\nIteration #{iteration}, Stream #{i}:\nPrompt: {prompt}\nResponse: {response}\nScore: {score}')
 
         wandb_logger.log(iteration, extracted_attack_list, target_response_list, judge_scores)
 
