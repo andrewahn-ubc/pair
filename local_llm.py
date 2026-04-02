@@ -69,12 +69,14 @@ class LocalSharedLlamaChat(LanguageModel):
                 input_ids = self.tokenizer.apply_chat_template(
                     messages, tokenize=True, add_generation_prompt=True, return_tensors="pt"
                 ).to(self.model.device)
-                prompt_len = input_ids.shape[-1]
             else:
-                # Models without chat_template (e.g. Vicuna)
                 prompt_str = self._format_messages_vicuna(messages)
                 input_ids = self.tokenizer(prompt_str, return_tensors="pt").input_ids.to(self.model.device)
+
+            if isinstance(input_ids, torch.Tensor):
                 prompt_len = input_ids.shape[-1]
+            else:
+                prompt_len = input_ids["input_ids"].shape[-1]
 
             do_sample = temperature is not None and temperature > 0
             gen_kwargs = dict(
@@ -91,10 +93,8 @@ class LocalSharedLlamaChat(LanguageModel):
             with torch.inference_mode():
                 if isinstance(input_ids, torch.Tensor):
                     out = self.model.generate(input_ids, **gen_kwargs)
-                    prompt_len = input_ids.shape[-1]
                 else:
                     out = self.model.generate(**input_ids, **gen_kwargs)
-                    prompt_len = input_ids["input_ids"].shape[-1]
 
             new_tokens = out[0, prompt_len:]
             text = self.tokenizer.decode(new_tokens, skip_special_tokens=True)
