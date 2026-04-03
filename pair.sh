@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=pair_eval
-#SBATCH --account=rrg-mijungp
+#SBATCH --account=def-mijungp
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=80G
