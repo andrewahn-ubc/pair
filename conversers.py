@@ -28,8 +28,9 @@ def load_attack_and_target_models(args):
         category=args.category,
         max_n_tokens=args.target_max_n_tokens,
         evaluate_locally=args.evaluate_locally,
+        use_jailbreakbench=args.use_jailbreakbench, 
         phase=args.jailbreakbench_phase,
-        local_model_path=local_path,         # <-- target path
+        local_model_path=local_path,
         shared_local_model=shared_local,
     )
 
@@ -205,6 +206,7 @@ class TargetLM():
         self.phase = phase
         self.use_jailbreakbench = use_jailbreakbench
         self.evaluate_locally = evaluate_locally
+        self.template = FASTCHAT_TEMPLATE_NAMES.get(Model(model_name), model_name)
 
         from config import TARGET_TEMP,  TARGET_TOP_P   
         self.temperature = TARGET_TEMP

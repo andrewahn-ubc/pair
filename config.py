@@ -3,8 +3,8 @@ VICUNA_PATH = "/home/pchao/vicuna-13b-v1.5"
 LLAMA_PATH = "/home/pchao/Llama-2-7b-chat-hf"
 
 # Default local checkpoints (override with CLI --local-llama-path / --local-llama-guard-path)
-LOCAL_LLAMA_PATH = "/home/taegyoem/scratch/llama2_7b_chat_hf"
-LOCAL_LLAMA_GUARD_PATH = "/home/taegyoem/scratch/llama_guard_7b"
+LOCAL_LLAMA_PATH = "/home/taegyoem/scratch/llama2_7b"
+LOCAL_LLAMA_GUARD_PATH = "/home/taegyoem/scratch/llama_guard"
 LOCAL_VICUNA_PATH = "/home/taegyoem/scratch/vicuna_13b"
 
 ATTACK_TEMP = 1
@@ -23,6 +23,7 @@ class Model(Enum):
     claude_2 = "claude-2.1"
     gemini = "gemini-pro"
     mixtral = "mixtral"
+    wizard_vicuna = "wizard-vicuna-13b-uncensored"
 
 MODEL_NAMES = [model.value for model in Model]
 
@@ -30,7 +31,8 @@ MODEL_NAMES = [model.value for model in Model]
 HF_MODEL_NAMES: dict[Model, str] = {
     Model.llama_2: "meta-llama/Llama-2-7b-chat-hf",
     Model.vicuna: "lmsys/vicuna-13b-v1.5",
-    Model.mixtral: "mistralai/Mixtral-8x7B-Instruct-v0.1"
+    Model.mixtral: "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    Model.wizard_vicuna: "TheBloke/Wizard-Vicuna-13B-Uncensored-HF"
 }
 
 TOGETHER_MODEL_NAMES: dict[Model, str] = {
@@ -48,6 +50,7 @@ FASTCHAT_TEMPLATE_NAMES: dict[Model, str] = {
     Model.vicuna: "vicuna_v1.1",
     Model.llama_2: "llama-2-7b-chat-hf",
     Model.mixtral: "mixtral",
+    Model.wizard_vicuna: "vicuna_v1.1"
 }
 
 API_KEY_NAMES: dict[Model, str] = {
@@ -100,5 +103,15 @@ LITELLM_TEMPLATES: dict[Model, dict] = {
                 "post_message": "</s>",
                 "initial_prompt_value" : "<s>",
                 "eos_tokens": ["</s>", "[/INST]"]
+    },
+    Model.wizard_vicuna: {
+        "roles": {
+            "system": {"pre_message": "", "post_message": " "},
+            "user": {"pre_message": "USER: ", "post_message": " ASSISTANT:"},
+            "assistant": {"pre_message": "", "post_message": ""},
+        },
+        "post_message": "</s>",
+        "initial_prompt_value": "",
+        "eos_tokens": ["</s>"]
     }
 }
