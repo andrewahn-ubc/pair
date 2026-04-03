@@ -27,11 +27,11 @@ python -u main.py \
   --judge-model llama-guard-local \
   --evaluate-locally \
   --not-jailbreakbench \
-  --local-attacker-path /home/taegyoem/scratch/wizard_vicuna_13b \
-  --local-llama-path /home/taegyoem/scratch/llama2_7b \
-  --local-llama-guard-path /home/taegyoem/scratch/llama_guard \
-  --input-path "/home/taegyoem/scratch/official_data/test_00.csv" \
-  --output-path "/home/taegyoem/scratch/pair/results/test_00_pair_output.csv" \
+  --local-attacker-path /scratch/taegyoem/wizard_vicuna_13b \
+  --local-llama-path /scratch/taegyoem/llama2_7b \
+  --local-llama-guard-path /scratch/taegyoem/llama_guard \
+  --input-path "/home/taegyoem/links/scratch/official_data/test_00.csv" \
+  --output-path "/home/taegyoem/links/scratch/pair/results/test_00_pair_output.csv" \
   --n-streams "30" \
   --n-iterations "3" 
   
