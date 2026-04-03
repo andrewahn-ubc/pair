@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --job-name=pair_eval
+#SBATCH --job-name=pair_eval_vicuna
 #SBATCH --account=def-mijungp
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=80G
 #SBATCH --time=12:00:00
-#SBATCH --output=logs/pair_eval_%j.out
+#SBATCH --output=logs/pair_eval_vicuna_%j.out
 
 module purge
 module load StdEnv/2023 python/3.11 cuda
@@ -22,12 +22,12 @@ print("\n start time: " + str(int(time.time())))
 PY
 
 python -u main.py \
-  --attack-model wizard-vicuna-13b-uncensored \
+  --attack-model vicuna-13b-v1.5 \
   --target-model llama-2-7b-chat-hf \
   --judge-model llama-guard-local \
   --evaluate-locally \
   --not-jailbreakbench \
-  --local-attacker-path /scratch/taegyoem/wizard_vicuna_13b \
+  --local-attacker-path /scratch/taegyoem/vicuna_13b \
   --local-llama-path /scratch/taegyoem/llama2_7b \
   --local-llama-guard-path /scratch/taegyoem/llama_guard \
   --input-path "/home/taegyoem/links/scratch/official_data/test_00.csv" \
