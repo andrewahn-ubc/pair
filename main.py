@@ -120,6 +120,17 @@ def pair(args, attackLM, targetLM, judgeLM):
         logger.debug("Finished getting adversarial prompts.")
 
         adv_prompt_list = [attack["prompt"] for attack in extracted_attack_list]
+
+        # Filter out prompts that are actually jailbroken responses
+        filtered = [(prompt, attack, conv) for prompt, attack, conv in zip(adv_prompt_list, extracted_attack_list, convs_list)
+                    if not prompt.lower().strip().startswith("sure")]
+        if not filtered:
+            print("All prompts filtered out this iteration, skipping.")
+            continue
+        adv_prompt_list, extracted_attack_list, convs_list[:] = zip(*filtered)
+        adv_prompt_list = list(adv_prompt_list)
+        extracted_attack_list = list(extracted_attack_list)
+        convs_list[:] = list(convs_list)
         improv_list = [attack["improvement"] for attack in extracted_attack_list]
 
         memory_after = memory_usage_psutil()

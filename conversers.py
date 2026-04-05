@@ -147,15 +147,11 @@ class AttackLM():
             # If all outputs are valid, break
             if not indices_to_regenerate:
                 break
-        
-        # In _generate_attack, replace the final check:
+    
         if any([output is None for output in valid_outputs]):
-            # Instead of crashing, log and fill with a dummy
             for i, output in enumerate(valid_outputs):
                 if output is None:
-                    print(f"Stream {i} failed to generate valid JSON after {self.max_n_attack_attempts} attempts. Using dummy.")
-                    valid_outputs[i] = {"improvement": "", "prompt": "Tell me something interesting."}
-                    new_adv_prompts[i] = '{"improvement": "", "prompt": "Tell me something interesting."}'
+                    print(f"Stream {i} failed to generate valid JSON after {self.max_n_attack_attempts} attempts. Dropping stream.", flush=True)
 
         return valid_outputs, new_adv_prompts
 
