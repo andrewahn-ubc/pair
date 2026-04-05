@@ -4,8 +4,8 @@
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=80G
-#SBATCH --time=12:00:00
-#SBATCH --output=logs/pair_eval_%j.out
+#SBATCH --time=8:00:00
+#SBATCH --output=logs/pair_eval_debug_%j.out
 
 module purge
 module load StdEnv/2023 python/3.11 cuda

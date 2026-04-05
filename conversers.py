@@ -134,6 +134,7 @@ class AttackLM():
             for i, full_output in enumerate(outputs_list):
                 orig_index = indices_to_regenerate[i]
                 full_output = init_message + full_output + "}" # Add end brace since we terminate generation on end braces
+                print(f"[DEBUG stream {orig_index} attempt {attempt}]: {repr(full_output)}", flush=True)  # ADD THIS
                 attack_dict, json_str = extract_json(full_output)
                 if attack_dict is not None:
                     valid_outputs[orig_index] = attack_dict
