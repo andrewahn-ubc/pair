@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --job-name=pair_eval_vicuna
+#SBATCH --job-name=pair_eval_best_stream
 #SBATCH --account=def-mijungp
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=80G
-#SBATCH --time=8:00:00
-#SBATCH --output=logs/pair_eval_vicuna_dropout_%j.out
+#SBATCH --time=12:00:00
+#SBATCH --output=logs/pair_eval_vicuna_best_stream_%j.out
 
 module purge
 module load StdEnv/2023 python/3.11 cuda
