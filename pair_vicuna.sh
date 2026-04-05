@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=80G
 #SBATCH --time=8:00:00
-#SBATCH --output=logs/pair_eval_vicuna_debug_%j.out
+#SBATCH --output=logs/pair_eval_vicuna_dropout_%j.out
 
 module purge
 module load StdEnv/2023 python/3.11 cuda
@@ -31,7 +31,7 @@ python -u main.py \
   --local-llama-path /scratch/taegyoem/llama2_7b \
   --local-llama-guard-path /scratch/taegyoem/llama_guard \
   --input-path "/home/taegyoem/links/scratch/official_data/test_00.csv" \
-  --output-path "/home/taegyoem/links/scratch/pair/results/test_00_pair_output.csv" \
+  --output-path "/home/taegyoem/links/scratch/pair/results/test_00_pair_output_lol.csv" \
   --n-streams "30" \
   --n-iterations "3" 
   

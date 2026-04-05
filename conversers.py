@@ -172,20 +172,27 @@ class AttackLM():
         Returns:
         - List of generated outputs (dictionaries) or None for failed generations.
         """
-        assert len(convs_list) == len(prompts_list), "Mismatch between number of conversations and prompts."
+        assert len(convs_list) == len(prompts_list)
         
-        # Convert conv_list to openai format and add the initial message
         processed_convs_list, init_message = self.preprocess_conversation(convs_list, prompts_list)
         valid_outputs, new_adv_prompts = self._generate_attack(processed_convs_list, init_message)
 
-        for jailbreak_prompt, conv in zip(new_adv_prompts, convs_list):
-            # For open source models, we can seed the generation with proper JSON and omit the post message
-            # We add it back here
+        # Filter out failed streams
+        surviving_convs = []
+        surviving_outputs = []
+        for jailbreak_prompt, conv, output in zip(new_adv_prompts, convs_list, valid_outputs):
+            if output is None:
+                continue
             if self.initialize_output:
                 jailbreak_prompt += self.model.post_message
             conv.update_last_message(jailbreak_prompt)
-        
-        return valid_outputs
+            surviving_convs.append(conv)
+            surviving_outputs.append(output)
+
+        # Update convs_list in place to reflect surviving streams
+        convs_list[:] = surviving_convs
+
+        return surviving_outputs
 
 class TargetLM():
     """
