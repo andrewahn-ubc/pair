@@ -261,6 +261,15 @@ class WandBLogger:
         logger.info(f"Index: {self.index}")
         logger.info(f"Goal: {self.goal}")
         df = self.table
+
+        if df.empty:
+            print("No runs were logged, so no summary stats are available.")
+            return
+
+        if "judge_scores" not in df.columns:
+            print(f"Missing 'judge_scores' column. Available columns: {list(df.columns)}")
+            return
+
         if self.is_jailbroken:
             num_total_jailbreaks = df[df["judge_scores"] == 10]["conv_num"].nunique()
             logger.info(f"First Jailbreak: {self.query_to_jailbreak} Queries")
