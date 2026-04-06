@@ -116,7 +116,9 @@ def pair(args, attackLM, targetLM, judgeLM):
                 for target_response, score in zip(target_response_list, judge_scores)
             ]
 
-        extracted_attack_list = attackLM.get_attack(convs_list, processed_response_list)
+        extracted_attack_list, surviving_indices = attackLM.get_attack(convs_list, processed_response_list)
+        processed_response_list = [processed_response_list[i] for i in surviving_indices]
+
         logger.debug("Finished getting adversarial prompts.")
 
         adv_prompt_list = [attack["prompt"] for attack in extracted_attack_list]

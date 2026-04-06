@@ -155,6 +155,7 @@ class AttackLM():
 
         return valid_outputs, new_adv_prompts
 
+    
     def get_attack(self, convs_list, prompts_list):
         """
         Generates responses for a batch of conversations and prompts using a language model. 
@@ -173,10 +174,10 @@ class AttackLM():
         processed_convs_list, init_message = self.preprocess_conversation(convs_list, prompts_list)
         valid_outputs, new_adv_prompts = self._generate_attack(processed_convs_list, init_message)
 
-        # Filter out failed streams
         surviving_convs = []
         surviving_outputs = []
-        for jailbreak_prompt, conv, output in zip(new_adv_prompts, convs_list, valid_outputs):
+        surviving_indices = []
+        for idx, (jailbreak_prompt, conv, output) in enumerate(zip(new_adv_prompts, convs_list, valid_outputs)):
             if output is None:
                 continue
             if self.initialize_output:
@@ -184,11 +185,10 @@ class AttackLM():
             conv.update_last_message(jailbreak_prompt)
             surviving_convs.append(conv)
             surviving_outputs.append(output)
+            surviving_indices.append(idx)
 
-        # Update convs_list in place to reflect surviving streams
         convs_list[:] = surviving_convs
-
-        return surviving_outputs
+        return surviving_outputs, surviving_indices
 
 class TargetLM():
     """
