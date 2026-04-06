@@ -115,9 +115,14 @@ def pair(args, attackLM, targetLM, judgeLM):
                 process_target_response(target_response, score, args.goal, args.target_str)
                 for target_response, score in zip(target_response_list, judge_scores)
             ]
+        
+        # Trim processed_response_list to match current number of surviving streams
+        processed_response_list = processed_response_list[:len(convs_list)]
+        extracted_attack_list, surviving_indices = attackLM.get_attack(convs_list, processed_response_list)
+        # Keep processed_response_list in sync with surviving streams
+        processed_response_list = [processed_response_list[i] for i in surviving_indices]
 
         extracted_attack_list, surviving_indices = attackLM.get_attack(convs_list, processed_response_list)
-        processed_response_list = [processed_response_list[i] for i in surviving_indices]
 
         logger.debug("Finished getting adversarial prompts.")
 
