@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --job-name=pair_eval
+#SBATCH --job-name=pair_eval_wizard
 #SBATCH --account=def-mijungp
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=80G
 #SBATCH --time=8:00:00
-#SBATCH --output=logs/pair_eval_%j.out
+#SBATCH --output=logs/pair_eval_wizard_%j.out
 
 module purge
 module load StdEnv/2023 python/3.11 cuda

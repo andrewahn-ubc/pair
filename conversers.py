@@ -94,24 +94,13 @@ class AttackLM():
         self.initialize_output = self.model.use_open_source_model
         self.template = FASTCHAT_TEMPLATE_NAMES[self.model_name]
 
-    def preprocess_conversation(self, convs_list: list, prompts_list: list[str]):
-        # For open source models, we can seed the generation with proper JSON
-        init_message = ""
-        if self.initialize_output:
-            
-            # Initalize the attack model's generated output to match format
-            if len(convs_list[0].messages) == 0:# If is first message, don't need improvement
-                init_message = '{"improvement": "","prompt": "'
-            else:
-                init_message = '{"improvement": "'
+    def preprocess_conversation(self, convs_list, prompts_list):
         for conv, prompt in zip(convs_list, prompts_list):
             conv.append_message(conv.roles[0], prompt)
-            if self.initialize_output:
-                conv.append_message(conv.roles[1], init_message)
         openai_convs_list = [conv.to_openai_api_messages() for conv in convs_list]
-        return openai_convs_list, init_message
+        return openai_convs_list
         
-    def _generate_attack(self, openai_conv_list: list[list[dict]], init_message: str):
+    def _generate_attack(self, openai_conv_list: list[list[dict]]):
         batchsize = len(openai_conv_list)
         indices_to_regenerate = list(range(batchsize))
         valid_outputs = [None] * batchsize
@@ -133,7 +122,6 @@ class AttackLM():
             new_indices_to_regenerate = []
             for i, full_output in enumerate(outputs_list):
                 orig_index = indices_to_regenerate[i]
-                full_output = init_message + full_output + "}" # Add end brace since we terminate generation on end braces
                 print(f"[DEBUG stream {orig_index} attempt {attempt}]: {repr(full_output)}", flush=True)  # ADD THIS
                 attack_dict, json_str = extract_json(full_output)
                 if attack_dict is not None:
@@ -171,8 +159,8 @@ class AttackLM():
         """
         assert len(convs_list) == len(prompts_list)
         
-        processed_convs_list, init_message = self.preprocess_conversation(convs_list, prompts_list)
-        valid_outputs, new_adv_prompts = self._generate_attack(processed_convs_list, init_message)
+        processed_convs_list = self.preprocess_conversation(convs_list, prompts_list)
+        valid_outputs, new_adv_prompts = self._generate_attack(processed_convs_list)
 
         surviving_convs = []
         surviving_outputs = []

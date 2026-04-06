@@ -122,7 +122,9 @@ def pair(args, attackLM, targetLM, judgeLM):
         # Keep processed_response_list in sync with surviving streams
         processed_response_list = [processed_response_list[i] for i in surviving_indices]
 
-        extracted_attack_list, surviving_indices = attackLM.get_attack(convs_list, processed_response_list)
+        if not convs_list:
+            print("All streams dropped. Ending early.")
+            break
 
         logger.debug("Finished getting adversarial prompts.")
 
