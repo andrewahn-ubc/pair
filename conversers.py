@@ -122,6 +122,9 @@ class AttackLM():
             new_indices_to_regenerate = []
             for i, full_output in enumerate(outputs_list):
                 orig_index = indices_to_regenerate[i]
+                full_output = full_output.rstrip()
+                if not full_output.endswith("}"):
+                    full_output += "}"
                 print(f"[DEBUG stream {orig_index} attempt {attempt}]: {repr(full_output)}", flush=True)  # ADD THIS
                 attack_dict, json_str = extract_json(full_output)
                 if attack_dict is not None:
