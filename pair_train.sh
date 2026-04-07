@@ -2,7 +2,7 @@
 #SBATCH --job-name=pair-train
 #SBATCH --account=def-mijungp
 #SBATCH --gres=gpu:1
-#SBATCH --array=0-299
+#SBATCH --array=0-299%75
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=80G
 #SBATCH --time=3:00:00
