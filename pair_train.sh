@@ -2,10 +2,10 @@
 #SBATCH --job-name=pair-train
 #SBATCH --account=def-mijungp
 #SBATCH --gres=gpu:1
-#SBATCH --array=0-299%75
+#SBATCH --array=0-12
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=80G
-#SBATCH --time=3:00:00
+#SBATCH --time=6:00:00
 #SBATCH --output=logs/pair_train_%A_%a.out
 
 module purge
@@ -22,7 +22,25 @@ import time
 print("\n start time: " + str(int(time.time())))
 PY
 
-IDX=$(printf "%02d" ${SLURM_ARRAY_TASK_ID})
+# Missing dataset indices
+MISSING_INDICES=(00
+01
+02
+05
+06
+10
+11
+13
+14
+17
+18
+19
+202)
+
+# Map array task ID -> actual missing index
+REAL_IDX=${MISSING_INDICES[$SLURM_ARRAY_TASK_ID]}
+
+IDX=$(printf "%02d" "$REAL_IDX")
 INPUT_PATH="/home/taegyoem/links/scratch/official_data/train_${IDX}.csv"
 OUTPUT_PATH="/home/taegyoem/links/scratch/pair/results/train_pair_output_${IDX}.csv"
 
