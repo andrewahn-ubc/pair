@@ -227,11 +227,15 @@ class TargetLM():
             responses = llm_response.responses
         else:
             batchsize = len(prompts_list)
-            convs_list = [conv_template(self.template) for _ in range(batchsize)]
-            full_prompts = []
-            for conv, prompt in zip(convs_list, prompts_list):
-                conv.append_message(conv.roles[0], prompt)
-                full_prompts.append(conv.to_openai_api_messages())
+            if self.evaluate_locally and self.model_name == Model.llama_3.value:
+                # Use the checkpoint's built-in chat template (not Llama-2 FastChat formatting).
+                full_prompts = [[{"role": "user", "content": p}] for p in prompts_list]
+            else:
+                convs_list = [conv_template(self.template) for _ in range(batchsize)]
+                full_prompts = []
+                for conv, prompt in zip(convs_list, prompts_list):
+                    conv.append_message(conv.roles[0], prompt)
+                    full_prompts.append(conv.to_openai_api_messages())
 
             responses = self.model.batched_generate(full_prompts, 
                                                             max_n_tokens = self.max_n_tokens,  

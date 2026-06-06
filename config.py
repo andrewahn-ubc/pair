@@ -3,7 +3,7 @@ VICUNA_PATH = "/home/pchao/vicuna-13b-v1.5"
 LLAMA_PATH = "/home/pchao/Llama-2-7b-chat-hf"
 
 # Default local checkpoints (override with CLI --local-llama-path / --local-llama-guard-path)
-LOCAL_LLAMA_PATH = "/home/taegyoem/scratch/llama2_7b"
+LOCAL_LLAMA_PATH = "/home/taegyoem/scratch/llama_3_8b_instruct"
 LOCAL_LLAMA_GUARD_PATH = "/home/taegyoem/scratch/llama_guard"
 LOCAL_VICUNA_PATH = "/home/taegyoem/scratch/vicuna_13b"
 
@@ -17,6 +17,7 @@ TARGET_TOP_P = 1
 class Model(Enum):
     vicuna = "vicuna-13b-v1.5"
     llama_2 = "llama-2-7b-chat-hf"
+    llama_3 = "llama-3-8b-instruct"
     gpt_3_5 = "gpt-3.5-turbo-1106"
     gpt_4 = "gpt-4-0125-preview"
     claude_1 = "claude-instant-1.2"
@@ -30,6 +31,7 @@ MODEL_NAMES = [model.value for model in Model]
 
 HF_MODEL_NAMES: dict[Model, str] = {
     Model.llama_2: "meta-llama/Llama-2-7b-chat-hf",
+    Model.llama_3: "meta-llama/Meta-Llama-3-8B-Instruct",
     Model.vicuna: "lmsys/vicuna-13b-v1.5",
     Model.mixtral: "mistralai/Mixtral-8x7B-Instruct-v0.1",
     Model.wizard_vicuna: "TheBloke/Wizard-Vicuna-13B-Uncensored-HF"
@@ -49,6 +51,7 @@ FASTCHAT_TEMPLATE_NAMES: dict[Model, str] = {
     Model.gemini: "gemini-pro",
     Model.vicuna: "vicuna_v1.1",
     Model.llama_2: "llama-2-7b-chat-hf",
+    Model.llama_3: "llama-3-8b-instruct",
     Model.mixtral: "mixtral",
     Model.wizard_vicuna: "vicuna_v1.1"
 }

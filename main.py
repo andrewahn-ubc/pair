@@ -227,7 +227,7 @@ if __name__ == '__main__':
         "--target-model",
         default = "vicuna-13b-v1.5", #TODO changed
         help = "Name of target model.",
-        choices=["vicuna-13b-v1.5", "llama-2-7b-chat-hf", "gpt-3.5-turbo-1106", "gpt-4-0125-preview", "claude-instant-1.2", "claude-2.1", "gemini-pro",]
+        choices=["vicuna-13b-v1.5", "llama-2-7b-chat-hf", "llama-3-8b-instruct", "gpt-3.5-turbo-1106", "gpt-4-0125-preview", "claude-instant-1.2", "claude-2.1", "gemini-pro",]
     )
     parser.add_argument(
         "--target-max-n-tokens",
@@ -310,7 +310,7 @@ if __name__ == '__main__':
         "--local-llama-path",
         type = str,
         default = LOCAL_LLAMA_PATH,
-        help = "Directory with a local Hugging Face Llama 2 Chat model (used for attacker and target when --evaluate-locally; loads twice)."
+        help = "Directory with a local Hugging Face chat model for the target (and attacker if no --local-attacker-path)."
     )
     parser.add_argument(
         "--local-llama-guard-path",

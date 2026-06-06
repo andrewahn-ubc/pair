@@ -2,7 +2,7 @@
 #SBATCH --job-name=pair-train
 #SBATCH --account=def-mijungp
 #SBATCH --gres=gpu:1
-#SBATCH --array=0-12
+#SBATCH --array=0-299
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=80G
 #SBATCH --time=6:00:00
@@ -22,38 +22,20 @@ import time
 print("\n start time: " + str(int(time.time())))
 PY
 
-# Missing dataset indices
-MISSING_INDICES=(00
-01
-02
-05
-06
-10
-11
-13
-14
-17
-18
-19
-202)
-
-# Map array task ID -> actual missing index
-REAL_IDX=${MISSING_INDICES[$SLURM_ARRAY_TASK_ID]}
-
-IDX=$(printf "%02d" "$REAL_IDX")
+IDX=$(printf "%02d" "$SLURM_ARRAY_TASK_ID")
 INPUT_PATH="/home/taegyoem/links/scratch/official_data/train_${IDX}.csv"
-OUTPUT_PATH="/home/taegyoem/links/scratch/pair/results/train_pair_output_${IDX}.csv"
+OUTPUT_PATH="/home/taegyoem/links/scratch/pair/results/train_pair_llama3_output_${IDX}.csv"
 
-echo "Running on file: $DATA_PATH"
+echo "Running on file: $INPUT_PATH"
 
 python -u main.py \
   --attack-model vicuna-13b-v1.5 \
-  --target-model llama-2-7b-chat-hf \
+  --target-model llama-3-8b-instruct \
   --judge-model llama-guard-local \
   --evaluate-locally \
   --not-jailbreakbench \
   --local-attacker-path /scratch/taegyoem/vicuna_13b \
-  --local-llama-path /scratch/taegyoem/llama2_7b \
+  --local-llama-path /home/taegyoem/scratch/llama_3_8b_instruct \
   --local-llama-guard-path /scratch/taegyoem/llama_guard \
   --input-path "$INPUT_PATH" \
   --output-path "$OUTPUT_PATH" \
