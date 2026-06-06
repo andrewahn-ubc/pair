@@ -5,7 +5,7 @@
 #SBATCH --array=0-299
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=80G
-#SBATCH --time=6:00:00
+#SBATCH --time=10:00:00
 #SBATCH --output=logs/pair_train_%A_%a.out
 
 module purge
