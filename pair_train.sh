@@ -35,7 +35,7 @@ python -u main.py \
   --evaluate-locally \
   --not-jailbreakbench \
   --local-attacker-path /scratch/taegyoem/vicuna_13b \
-  --local-llama-path /home/taegyoem/scratch/llama_3_8b_instruct \
+  --local-llama-path /scratch/taegyoem/llama_3_8b_instruct \
   --local-llama-guard-path /scratch/taegyoem/llama_guard \
   --input-path "$INPUT_PATH" \
   --output-path "$OUTPUT_PATH" \
