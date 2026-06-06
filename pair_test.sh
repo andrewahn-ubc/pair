@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=pair-test
 #SBATCH --account=def-mijungp
-#SBATCH --array=0-99
+#SBATCH --array=0-106
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=80G
