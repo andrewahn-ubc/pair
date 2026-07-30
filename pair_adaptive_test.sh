@@ -16,9 +16,24 @@ module load StdEnv/2023 python/3.11 cuda
 
 source $SCRATCH/venv/pair/bin/activate
 
-cd $SCRATCH/pair
+PAIR_DIR="${SCRATCH}/pair"
+cd "$PAIR_DIR" || { echo "ERROR: cannot cd to $PAIR_DIR"; exit 1; }
+export PYTHONPATH="${PAIR_DIR}${PYTHONPATH:+:$PYTHONPATH}"
 
 mkdir -p logs results
+
+# Fail fast if the PAIR source tree is incomplete (common cause of ModuleNotFoundError).
+for f in main.py loggers.py conversers.py judges.py local_llm.py config.py common.py; do
+  if [[ ! -f "$f" ]]; then
+    echo "ERROR: missing $PAIR_DIR/$f — sync the full JailbreakingLLMs repo to \$SCRATCH/pair"
+    ls -la "$PAIR_DIR"
+    exit 1
+  fi
+done
+
+echo "cwd=$(pwd)"
+echo "python=$(which python)"
+echo "PYTHONPATH=$PYTHONPATH"
 
 python - <<'PY'
 import time
@@ -34,7 +49,7 @@ echo "Running on file: $INPUT_PATH"
 echo "Target model path: $TARGET_PATH"
 echo "Output: $OUTPUT_PATH"
 
-python -u main.py \
+python -u "$PAIR_DIR/main.py" \
   --attack-model vicuna-13b-v1.5 \
   --target-model llama-2-7b-chat-hf \
   --judge-model llama-guard-local \
