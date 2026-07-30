@@ -227,8 +227,11 @@ class TargetLM():
             responses = llm_response.responses
         else:
             batchsize = len(prompts_list)
-            if self.evaluate_locally and self.model_name == Model.llama_3.value:
-                # Use the checkpoint's built-in chat template (not Llama-2 FastChat formatting).
+            if self.evaluate_locally and self.model_name in (
+                Model.llama_2.value,
+                Model.llama_3.value,
+            ):
+                # Use the checkpoint's built-in chat template (not FastChat formatting).
                 full_prompts = [[{"role": "user", "content": p}] for p in prompts_list]
             else:
                 convs_list = [conv_template(self.template) for _ in range(batchsize)]
