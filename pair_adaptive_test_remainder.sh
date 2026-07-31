@@ -40,8 +40,8 @@ import time
 print("\n start time: " + str(int(time.time())))
 PY
 
-IDX=$(printf "%02d" "$SLURM_ARRAY_TASK_ID")
-INPUT_PATH="${SCRATCH}/official_data/adaptive_test_remainder/test_${IDX}.csv"
+IDX=$(printf "%03d" "$SLURM_ARRAY_TASK_ID")
+INPUT_PATH="${SCRATCH}/dp-llm-experiments/official_data/adaptive_test_remainder/test_${IDX}.csv"
 OUTPUT_PATH="${SCRATCH}/pair/results/adaptive_test_remainder_pair_merged_l2_lam0.1_eps-0.5_${IDX}.csv"
 TARGET_PATH="${SCRATCH}/merged_adaptive_l2_lam0.1_eps-0.5_ep5"
 
