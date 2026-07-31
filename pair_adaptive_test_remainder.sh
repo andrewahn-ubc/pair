@@ -9,7 +9,7 @@
 #SBATCH --output=logs/pair_remainder_%A_%a.out
 
 # PAIR on adaptive_test_remainder/ (165 chunks × 5 goals) against the merged Llama-2 target:
-#   /home/taegyoem/links/scratch/merged_run_lr2e-05_lam1_eps0.5_ep5/
+#   $SCRATCH/merged_adaptive_l2_lam0.1_eps-0.5_ep5
 
 module purge
 module load StdEnv/2023 python/3.11 cuda
@@ -41,9 +41,9 @@ print("\n start time: " + str(int(time.time())))
 PY
 
 IDX=$(printf "%02d" "$SLURM_ARRAY_TASK_ID")
-INPUT_PATH="/home/taegyoem/links/scratch/official_data/adaptive_test_remainder/test_${IDX}.csv"
-OUTPUT_PATH="/home/taegyoem/links/scratch/pair/results/adaptive_test_remainder_pair_merged_eps0.5_${IDX}.csv"
-TARGET_PATH="/home/taegyoem/links/scratch/merged_run_lr2e-05_lam1_eps0.5_ep5"
+INPUT_PATH="${SCRATCH}/official_data/adaptive_test_remainder/test_${IDX}.csv"
+OUTPUT_PATH="${SCRATCH}/pair/results/adaptive_test_remainder_pair_merged_l2_lam0.1_eps-0.5_${IDX}.csv"
+TARGET_PATH="${SCRATCH}/merged_adaptive_l2_lam0.1_eps-0.5_ep5"
 
 echo "Running on file: $INPUT_PATH"
 echo "Target model path: $TARGET_PATH"
